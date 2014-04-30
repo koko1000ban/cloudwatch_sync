@@ -1,0 +1,134 @@
+metrics:
+  elasti_cache:
+    HighCPUUtilization:
+      metric_name: CPUUtilization
+      statistic: Average
+      period: 300
+      evaluation_periods: 1
+      threshold: 70
+      comparison_operator: GreaterThanThreshold
+      alarm_actions_type:
+      - emergency
+    HighBytesUsedForCache:
+      metric_name: BytesUsedForCache
+      statistic: Maximum
+      period: 300
+      evaluation_periods: 1
+      threshold: 697932185
+      comparison_operator: GreaterThanOrEqualToThreshold
+      alarm_actions_type: emergency
+    HighEvictions:
+      metric_name: Evictions
+      statistic: Sum
+      period: 300
+      evaluation_periods: 1
+      threshold: 10
+      comparison_operator: GreaterThanOrEqualToThreshold
+      alarm_actions_type: emergency
+    HighCurrConnections:
+      metric_name: CurrConnections
+      statistic: Sum
+      period: 300
+      evaluation_periods: 1
+      threshold: 40000
+      comparison_operator: GreaterThanOrEqualToThreshold
+      alarm_actions_type: emergency
+  rds:
+    HighCPUUtilization:
+      metric_name: CPUUtilization
+      statistic: Average
+      period: 60
+      evaluation_periods: 5
+      threshold: 80
+      comparison_operator: GreaterThanThreshold
+      alarm_actions_type: emergency
+    LowFreeStorageSpace:
+      metric_name: FreeStorageSpace
+      statistic: Average
+      period: 21600 # 6hours
+      evaluation_periods: 2
+      threshold: 20971520000
+      comparison_operator: LessThanOrEqualToThreshold
+      alarm_actions_type: emergency
+  ec2:
+    StatusCheckFailed:
+      metric_name: StatusCheckFailed
+      statistic: Average
+      period: 60
+      evaluation_periods: 2
+      threshold: 0
+      comparison_operator: GreaterThanThreshold
+      alarm_actions_type: emergency
+    HighCPUUtilization:
+      metric_name: CPUUtilization
+      statistic: Average
+      period: 60
+      evaluation_periods: 1
+      threshold: 60
+      comparison_operator: GreaterThanThreshold
+      alarm_actions_type: emergency
+  elb:
+    HighLatency:
+      metric_name: Latency
+      statistic: Average
+      period: 300
+      evaluation_periods: 1
+      threshold: 1.5
+      comparison_operator: GreaterThanOrEqualToThreshold
+      alarm_actions_type: emergency
+    HighHTTPCode_ELB_4XX:
+      metric_name: HTTPCode_ELB_4XX
+      statistic: Sum
+      period: 60
+      evaluation_periods: 1
+      threshold: 100
+      comparison_operator: GreaterThanOrEqualToThreshold
+      alarm_actions_type: emergency
+    HighHTTPCode_ELB_5XX:
+      metric_name: HTTPCode_ELB_5XX
+      statistic: Sum
+      period: 60
+      evaluation_periods: 1
+      threshold: 100
+      comparison_operator: GreaterThanOrEqualToThreshold
+      alarm_actions_type: emergency
+    HealthyHostCount:
+      metric_name: HealthyHostCount
+      statistic: Average
+      period: 60
+      evaluation_periods: 1
+      threshold: 1
+      comparison_operator: LessThanOrEqualToThreshold
+      alarm_actions_type: emergency
+alarm_actions:
+  emergency:
+    - 'arn:aws:sns:xxxxxxxxxxxxxxxxxxxxx'
+nodes:
+  ec2:
+  - name: "web*"
+    metrics:
+    - StatusCheckFailed
+    - HighCPUUtilization
+  - name: "foo.bar.baz"
+    metrics:
+    - StatusCheckFailed
+  elb:
+  - name: 'production-app'
+    metrics:
+    - HighHTTPCode_ELB_4XX
+    - HighHTTPCode_ELB_5XX
+    - HealthyHostCount
+    - HighLatency
+  rds:
+  - name: 'master'
+    metrics:
+    - HighCPUUtilization
+    - LowFreeStorageSpace
+  elasti_cache:
+  - name: 'redis'
+    cluster_node_id: '0001'
+    metrics:
+    - HighCPUUtilization
+    - HighBytesUsedForCache
+    - HighEvictions
+    - HighCurrConnections
